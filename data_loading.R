@@ -41,7 +41,7 @@ get_raw_data <-
         }
         voc_prod_fem <-
             read_csv(paste0(
-                dirname(sys.frame(1)$ofile),
+                "data_processing/",
                 "constants/vocabulary_production_norms_table_lvl_IIA_female.csv"
             ))
         voc_prod_fem$sex = "Female"
@@ -49,7 +49,7 @@ get_raw_data <-
         # voc_prod_fem[cols] = voc_prod_fem[cols]/max(voc_prod_fem[cols])
         voc_prod_mal <-
             read_csv(paste0(
-                dirname(sys.frame(1)$ofile),
+                "data_processing/",
                 "constants/vocabulary_production_norms_table_lvl_IIA_male.csv"
             ))
         voc_prod_mal$sex <- "Male"

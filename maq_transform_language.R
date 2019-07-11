@@ -76,6 +76,7 @@ childlanguage_transform <- function(rawdata, children_age_sex) {
     childlanguageassessment <- recombine(list("Children", "ChildLanguageAssessment"), rawdata) 
     removecols = c(names(childlanguageassessment)[str_detect(names(childlanguageassessment), "Children")], 
                    "ChildLanguageAssessment.ol.id", 
+                    "ChildLanguageAssessment.table_access",
                    "ChildLanguageAssessment.study",
                    "src", "study_id", 
                    "dst")
