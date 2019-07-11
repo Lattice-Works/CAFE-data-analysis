@@ -122,6 +122,8 @@ data_add_processed <- function(rawdata) {
     ))
     colnames(bigdataset) <- make.unique(names(bigdataset))
     
+    bigdataset <- postprocessing(bigdataset)
+    
     outdata <- rawdata
     outdata$tud[['preprocessed']] = tud_pr
     outdata$tud[['processed']] = tud_pr
