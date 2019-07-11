@@ -14,7 +14,10 @@ process_maq <- function(rawdata) {
     devices <- devices_transform(rawdata, children)
     devicelocations <- devicelocations_transform(rawdata)
     
-    children_age_sex = childrendemographics %>% select(c(sex, age_months, child_id))
+    children_age_sex = childrendemographics %>% 
+        group_by(sex, age_months, child_id) %>% 
+        select(c(sex, age_months, child_id)) %>% 
+        ungroup()
     childlanguage <-
         childlanguage_transform(rawdata, children_age_sex)
     
@@ -51,14 +54,19 @@ process_maq <- function(rawdata) {
     householdcommunication <- household_communication_transform(rawdata)
     
 
-    maq <-  children %>%
+    children = recombine(list("Respondents", "Children"), rawdata) %>%
+        select(child_id, respondent_id, study_id) %>%
+                   group_by(child_id, study_id) %>%
+                   summarise(count = n()) %>% select(-c(count))
+               
+    maq <-  children %>% 
         left_join(childrendemographics, by = "child_id") %>%
         left_join(deviceuse, by = "child_id") %>% 
         left_join(devices, by = "child_id") %>% 
         left_join(mobile_deviceuse, by = "child_id") %>%
         left_join(devicelocations, by = "child_id") %>%
         left_join(childlanguage, by = "child_id") %>% 
-        left_join(householdcommunication, by = "child_id") %>%
+        left_join(householdcommunication, by = "child_id") %>% 
         left_join(mediacontent, by = "child_id") %>%
         left_join(mediadeviceuse, by = "child_id") %>%
         left_join(mediauseconcerns, by = "child_id") %>%
@@ -74,7 +82,7 @@ process_maq <- function(rawdata) {
         left_join(income, by = "child_id")  %>%
         left_join(education, by = "child_id")  %>%
         left_join(public_assistance, by = "child_id")  %>%
-        left_join(employment, by = "child_id")  %>%
+        left_join(employment, by = "child_id")  %>% 
         left_join(sleep, by = "child_id") %>%
         left_join(households, by = "child_id") %>%
         left_join(childcare, by = "child_id") %>%

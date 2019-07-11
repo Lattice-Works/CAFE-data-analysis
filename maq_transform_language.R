@@ -84,10 +84,12 @@ childlanguage_transform <- function(rawdata, children_age_sex) {
         select(-removecols)
     oldnames = childlanguageassessment %>% names
     newnames <- str_replace(oldnames, "ChildLanguageAssessment.ol.|ChildLanguageAssessment.", "")
-    childlanguageassessment <- childlanguageassessment %>% rename_at(vars(oldnames), ~newnames)
+    childlanguageassessment <- childlanguageassessment %>% 
+        rename_at(vars(oldnames), ~newnames) %>%
+        group_by(child_id) %>% slice(1) %>% ungroup()
 
     childlanguage = childlanguage %>%
-        left_join(children_age_sex, by = 'child_id') %>%
+        left_join(children_age_sex, by = 'child_id') %>% 
         rowwise() %>%
         mutate(
             # percentile_wg_8_18 = get_percentiles(WG_8_18_says, age_months, sex, norms$wg),
@@ -100,7 +102,7 @@ childlanguage_transform <- function(rawdata, children_age_sex) {
             )
         )  %>%
         ungroup() %>%
-        select(-c(sex, age_months, table_access)) %>%
+        select(-c(sex, age_months)) %>%
         full_join(childlanguageassessment, by = "child_id")
     
     return(childlanguage)

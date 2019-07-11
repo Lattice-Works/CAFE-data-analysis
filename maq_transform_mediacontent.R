@@ -54,7 +54,8 @@ mediaconcerns_transform <- function(rawdata){
     
     mediauseconcerns = recombine(list("Children", "MediaUseConcerns"), rawdata) %>%
         select(c(variables, "child_id")) %>%
-        rename_at(vars(variables), ~str_replace(variables, "MediaUseConcerns.ol.", "mediauseconcerns_"))
+        rename_at(vars(variables), ~str_replace(variables, "MediaUseConcerns.ol.", "mediauseconcerns_")) %>%
+        group_by(child_id) %>% slice(1) %>% ungroup()
     return(mediauseconcerns)    
 }
     

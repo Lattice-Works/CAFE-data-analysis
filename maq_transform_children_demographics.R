@@ -130,7 +130,7 @@ childdemographics_transform <- function(rawdata, children) {
     
     children_demographics = children_demographics %>%
         full_join(childrendetails, by = "child_id") %>%
-        full_join(childrendetailshealth, by = "child_id") %>%
+        full_join(childrendetailshealth, by = "child_id") %>% 
         select(-c(
             table_access,
             birthdate,
@@ -144,18 +144,19 @@ childdemographics_transform <- function(rawdata, children) {
         select(child_id, respondent_relationship) %>% 
         group_by(child_id)  %>% slice(1) %>% ungroup()
     
-    immigration = recombine(list("Respondents", "ImmigrationStatus"), rawdata) %>%
-        left_join(children, by = "respondent_id") %>%
-        rename(
-            immigration_time_in_us = 'ImmigrationStatus.ol.status'
-        ) %>%
-        select(
-            child_id, immigration_time_in_us
-        )
+    # immigration = recombine(list("Respondents", "ImmigrationStatus"), rawdata) %>%
+    #     left_join(children, by = "respondent_id") %>%
+    #     rename(
+    #         immigration_time_in_us = 'ImmigrationStatus.ol.status'
+    #     ) %>%
+    #     group_by(child_id)  %>% slice(1) %>% ungroup() %>%
+    #     select(
+    #         child_id, immigration_time_in_us
+    #     )
 
     children_demographics = children_demographics %>% 
-        left_join(childrenrole, by = "child_id") %>%
-        left_join(immigration, by = "child_id")
+        left_join(childrenrole, by = "child_id")# %>%
+      #  left_join(immigration, by = "child_id")
     
     return(children_demographics)
 }
