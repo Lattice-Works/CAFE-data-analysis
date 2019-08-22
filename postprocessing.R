@@ -1,19 +1,20 @@
 postprocessing <- function(data) {
-    parent_use_key <-
-        c(
-            'Never' = 0,
-            "Less than 30 minutes" = 0.25,
-            "30-60 minutes" = 0.75,
-            "1-2 hours" = 1.5,
-            "2-3 hours" = 2.5,
-            "3-4 hours" = 3.5,
-            '4-5 hours' = 4.5,
-            'More than 5 hours' = 6,
-            "not used" = 0,
-            .default = NA
-        )
+    hours_key = c(
+        "Never" = 0,
+        "Less than 30 minutes" = 1,
+        "30-60 minutes" = 2,
+        "1-2 hours" = 3,
+        "2-3 hours" = 4,
+        "3-4 hours" = 5,
+        "4-5 hours" = 6,
+        "2-5 hours" = NA,
+        "More than 5 hours" = 7
+    )
     
-    data = data %>% mutate(parent_weekday_ipad_use_numeric = recode(parent_weekday_ipad_use, !!!parent_use_key))
+    data = data %>% mutate(
+        parent_weekday_ipad_use_numeric = recode(parent_weekday_ipad_use, !!!hours_key),
+        parent_weekday_computer_use_numeric = recode(parent_weekday_computer_use, !!!hours_key)
+        )
     
     return(data)
     
