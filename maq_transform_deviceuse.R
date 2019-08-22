@@ -287,10 +287,9 @@ deviceuse_transform <- function(rawdata, children) {
                                                                   "Started using in the last 6 months|Started using in last 6 months"
                                                               )], collapse = ", "),
             internet_access = first(Device_Use.ol.status[str_detect(Device_Use.ol.id, "internet_access")]),
-            transitmedia = first(Device_Use.ol.status[str_detect(Device_Use.ol.id, "media_in_transit")]),
-            television_on_household = first(Device_Use.general.frequency[str_detect(Device_Use.ol.id, "television_in_home")])
+            transitmedia = first(Device_Use.ol.status[str_detect(Device_Use.ol.id, "media_in_transit")])
         )
-    
+
     start_childuse = recombine(list("Children", "Device_Use"), rawdata) %>%
         rowwise() %>%
         filter(str_detect(Device_Use.ol.id, "_start_childuse") & !is.na(Device_Use.ol.status)) %>%

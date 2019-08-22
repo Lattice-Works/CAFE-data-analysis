@@ -56,12 +56,11 @@ childdemographics_transform <- function(rawdata, children) {
             ),
             age = ChildrenDetails.person.ageatevent
         ) %>% arrange(child_id, birthyear) %>%
-        group_by(child_id) %>% slice(1) %>% ungroup() %>%
         select(birthmonth, birthyear, child_id, age) %>%
         left_join(metadata, by = 'child_id') %>%
+        group_by(child_id) %>% slice(1) %>% ungroup() %>%
         mutate(
             fulldate = paste(birthyear, birthmonth, "01", sep = "-"),
-            fulldate = ifelse("NA" %in% fulldate, NA, fulldate),
             birthdate = ymd(fulldate),
             age_months = time_length(date(date_maq) - ymd(birthdate), unit =
                                          "month"),
