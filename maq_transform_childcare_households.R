@@ -25,6 +25,12 @@ childcare_transform <- function(rawdata) {
             childcare_firstage = first(ChildCare_Weekdays.ol.ageatonset)
         )
 
+    # recombine(list("Households", "Device_Use"), rawdata) %>%
+    #     mutate(duration = recode(Device_Use.ol.duration, !!!deviceuse_key)) %>%
+    #     group_by(child_id) %>% summarise(
+    #         television_on_household = first(Device_Use.general.frequency[str_detect(Device_Use.ol.id, "television_in_home")])
+    #     )
+    
     childcare_weekend = recombine(list("Children", "ChildCare_Weekends"), rawdata) %>%
         group_by(child_id) %>%
         rowwise() %>%

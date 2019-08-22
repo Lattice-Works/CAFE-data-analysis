@@ -16,8 +16,14 @@ get_raw_data <-
     function(jwt,
              cache = FALSE,
              auth = FALSE,
-             local = FALSE) {
+             local = FALSE,
+             shinysesh = TRUE
+             ) {
         print("Getting authenticated...")
+        if (shinysesh){
+            html("statusupdate", "Getting authenticated")    
+        }
+        
         
         if (auth == FALSE) {
                 apis <- get_apis(jwt, local)
@@ -28,7 +34,11 @@ get_raw_data <-
             apis <- NULL
         }
         
-        if (cache) {
+        if (shinysesh){
+            html("statusupdate", "Loading the data")    
+        }
+
+            if (cache) {
             rawdata <- read_data(apis, auth = auth, local = local)
         } else {
             rawdata <- load_data(apis)

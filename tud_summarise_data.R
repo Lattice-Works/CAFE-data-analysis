@@ -1,7 +1,11 @@
-summarise_data <- function(activitydata) {
+summarise_data <- function(activitydata, shinysesh = TRUE) {
     
     if (dim(activitydata)[1]==0) {
     return (tibble())
+    }
+    
+    if (shinysesh){
+        html("statusupdate", "Summarising Time Use Diary")    
     }
     
     summarydata <- activitydata %>% 

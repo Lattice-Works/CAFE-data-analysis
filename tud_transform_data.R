@@ -1,9 +1,13 @@
 ## combine everything
-process_activities <- function(rawdata) {
+process_activities <- function(rawdata, shinysesh = TRUE) {
     if (rawdata$auth == FALSE) {
         return (tibble())
     }
     
+    if (shinysesh){
+        html("statusupdate", "Processing Time Use Diary")    
+    }
+
     activity <- process_activity(rawdata)
 
     relatives <- process_relatives(rawdata)

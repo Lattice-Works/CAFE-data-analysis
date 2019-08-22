@@ -1,8 +1,12 @@
-process_maq <- function(rawdata) {
+process_maq <- function(rawdata, shinysesh = TRUE) {
     if (rawdata$auth == FALSE) {
         return (tibble())
     }
     
+    if (shinysesh){
+        html("statusupdate", "Processing MAQ data: children demographics")    
+    }
+
     children = recombine(list("Respondents", "Children"), rawdata) %>%
         select(child_id, respondent_id, study_id)
     
@@ -14,6 +18,10 @@ process_maq <- function(rawdata) {
     devices <- devices_transform(rawdata, children)
     devicelocations <- devicelocations_transform(rawdata)
     
+    if (shinysesh){
+        html("statusupdate", "Processing MAQ data: children language")    
+    }
+
     children_age_sex = childrendemographics %>% 
         group_by(sex, age_months, child_id) %>% 
         select(c(sex, age_months, child_id)) %>% 
@@ -21,11 +29,18 @@ process_maq <- function(rawdata) {
     childlanguage <-
         childlanguage_transform(rawdata, children_age_sex)
     
+    if (shinysesh){
+        html("statusupdate", "Processing MAQ data: media use")    
+    }
+
     mediacontent <- mediacontent_transform(rawdata, children)
     mediadeviceuse <- mediadeviceuse_transform(rawdata)
     
     mediauseconcerns <- mediaconcerns_transform(rawdata)
     
+    if (shinysesh){
+        html("statusupdate", "Processing MAQ data: parent media attitudes")    
+    }
     parentsmediause <- parentsmediause_transform(rawdata, children)
     parentsmediaexposure <-
         parentsmediaexposure_transform(rawdata, children)
@@ -34,9 +49,19 @@ process_maq <- function(rawdata) {
     parentsmediation <-
         parentsmediation_transform(rawdata, children)
     parentingmood <- parentingmood_transform(rawdata, children)
+
+    if (shinysesh){
+        html("statusupdate", "Processing MAQ data: parenting scales")    
+    }
+
     pm <- pm_transform(rawdata, children)
     psi <- psi_transform(rawdata, children)
     qa <- qa_transform(rawdata, children)
+
+    if (shinysesh){
+        html("statusupdate", "Processing MAQ data: parent demographics")    
+    }
+
     respondentdetails <-
         respondentdetails_transform(rawdata, children)
     income <-
@@ -59,6 +84,10 @@ process_maq <- function(rawdata) {
                    group_by(child_id, study_id) %>%
                    summarise(count = n()) %>% select(-c(count))
                
+    if (shinysesh){
+        html("statusupdate", "Processing MAQ data: putting the data together")    
+    }
+
     maq <-  children %>% 
         left_join(childrendemographics, by = "child_id") %>%
         left_join(deviceuse, by = "child_id") %>% 
@@ -113,6 +142,10 @@ process_maq <- function(rawdata) {
     oldnames = names(maq)
     newnames = str_replace_all(oldnames, " |\\(|\\)|/", "_") %>% tolower()
     maq = maq %>% rename_at(vars(oldnames), ~newnames)
+    
+    if (shinysesh){
+        html("statusupdate", "Finished loading the data...")    
+    }
     
     return(maq)
 }
