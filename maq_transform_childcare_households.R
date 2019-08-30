@@ -25,11 +25,6 @@ childcare_transform <- function(rawdata) {
             childcare_firstage = first(ChildCare_Weekdays.ol.ageatonset)
         )
 
-    # recombine(list("Households", "Device_Use"), rawdata) %>%
-    #     mutate(duration = recode(Device_Use.ol.duration, !!!deviceuse_key)) %>%
-    #     group_by(child_id) %>% summarise(
-    #         television_on_household = first(Device_Use.general.frequency[str_detect(Device_Use.ol.id, "television_in_home")])
-    #     )
     
     childcare_weekend = recombine(list("Children", "ChildCare_Weekends"), rawdata) %>%
         group_by(child_id) %>%
@@ -61,13 +56,25 @@ childcare_transform <- function(rawdata) {
 
 
 household_transform <- function(rawdata) {
-    household = recombine(list("Children", "Households"), rawdata) %>%
+    household = recombine(list("Children", "Households"), rawdata)
+    
+    household_types = household %>%
         group_by(child_id) %>%
         summarise(
             household_type = first(Households.demographics.hhtype)
         )
+    
+    household_tv = recombine(list("Households", "Device_Use"), rawdata) %>%
+        left_join(household, by = c("Households.household.id", "Households.table_access", "Households.demographics.hhtype", "study_id")) %>%
+        mutate(duration = recode(Device_Use.ol.duration, !!!deviceuse_key)) %>%
+        group_by(child_id) %>% summarise(
+            television_on_household = first(Device_Use.general.frequency[str_detect(Device_Use.ol.id, "television_in_home")])
+        )
+    
+    households = household_types %>%
+        left_join(household_tv)
 
-    return(household)
+    return(households)
 }
 
 household_communication_transform <- function(rawdata) {
