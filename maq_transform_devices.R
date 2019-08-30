@@ -16,8 +16,8 @@ devices_transform <- function(rawdata, children) {
     newnames = paste0("household_owns_", oldnames)
     hh_devices = hh_devices %>% rename_at(vars(oldnames), ~newnames)
     
-    resp_devices = recombine(list("Devices", "Children"), rawdata) %>%
-        left_join(children, by = 'child_id') %>%
+    resp_devices = recombine(list("Devices", "Respondents"), rawdata) %>%
+        left_join(children, by = 'respondent_id') %>%
         rowwise() %>%
         mutate(
             owns=TRUE,
@@ -43,14 +43,9 @@ devicelocations_transform <- function(rawdata) {
     children_locations = recombine(list("Children", "DeviceLocations"), rawdata) %>% select(-c(study_id))
     device_locations = device_locations %>%
         left_join(children_locations, by = c("dst", 
-                                             "DeviceLocations.ol.id",
                                              "DeviceLocations.table_access",
-                                             "DeviceLocations.ol.subject",
                                              "DeviceLocations.general.id",
-                                             "DeviceLocations.ol.description",
-                                             "DeviceLocations.ol.status",
                                              "DeviceLocations.study")) %>%
-        rowwise() %>%
         mutate(
             device = str_trim(str_split(RegularlyLocatedDevices.ol.name, "\\(")[[1]][1]),
             device = str_replace_all(device, " |\\(|\\)|/|-", "_") %>% tolower(),
