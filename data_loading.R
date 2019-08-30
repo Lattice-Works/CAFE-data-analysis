@@ -4,8 +4,10 @@ get_data <-
     function(jwt,
              cache = FALSE,
              auth = FALSE,
-             local = FALSE) {
-        rawdata = get_raw_data(jwt, cache, auth, local)
+             local = FALSE,
+             shinysesh = TRUE
+             ) {
+        rawdata = get_raw_data(jwt, cache, auth, local, shinysesh = shinysesh)
         if (rawdata$auth) {
             rawdata <- data_add_processed(rawdata)
         }
@@ -88,20 +90,20 @@ get_raw_data <-
 
 # function to add processed data to data
 
-data_add_processed <- function(rawdata) {
+data_add_processed <- function(rawdata, shinysesh = TRUE) {
     print("Processing the data...")
     ptm <- proc.time()
-    tud_pr = process_activities(rawdata)
+    tud_pr = process_activities(rawdata, shinysesh = shinysesh)
     print(paste0(
         "    ---- Transforming TUD took: ",
         (proc.time() - ptm)['elapsed'],
         " seconds."
     ))
     ptm <- proc.time()
-    tud_sm = summarise_data(tud_pr) %>% mutate(tud_present = TRUE)
+    tud_sm = summarise_data(tud_pr, shinysesh = shinysesh) %>% mutate(tud_present = TRUE)
     print(paste0("    ---- Summarising TUD took: ", (proc.time() - ptm)['elapsed'], " seconds."))
     ptm <- proc.time()
-    maq_pr = process_maq(rawdata) %>% mutate(maq_present = TRUE)
+    maq_pr = process_maq(rawdata, shinysesh = shinysesh) %>% mutate(maq_present = TRUE)
     print(paste0(
         "    ---- Transforming MAQ took: ",
         (proc.time() - ptm)['elapsed'],
