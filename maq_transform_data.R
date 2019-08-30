@@ -83,7 +83,8 @@ process_maq <- function(rawdata, shinysesh = TRUE) {
         select(child_id, respondent_id, study_id) %>%
                    group_by(child_id, study_id) %>%
                    summarise(count = n()) %>% select(-c(count))
-               
+    children$study_id[children$study_id == "BYU"] = "PM"
+    
     if (shinysesh){
         html("statusupdate", "Processing MAQ data: putting the data together")    
     }
